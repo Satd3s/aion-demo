@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aion · Demostración</title>
+  <link rel="icon" type="image/svg+xml" href="assets/brand-logo.svg" id="faviconLink" />
+  <meta name="application-name" content="Control de Asistencia" id="appNameMeta" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app-layout" id="appLayout" style="display: none;">
+    <!-- Zona de Detección Automática de Ratón (Hover) y Pestaña Visual -->
+    <div class="sidebar-trigger-zone" id="sidebarTriggerZone" title="Acerca el cursor a la izquierda para abrir el menú automáticamente"></div>
+    <div class="sidebar-edge-indicator" id="sidebarEdgeIndicator" role="button" tabindex="0" aria-controls="appSidebar" aria-label="Abrir menú" title="Abrir menú (o acerque el cursor a la izquierda)">
+      <span>☰ MENÚ</span>
+    </div>
+    <div class="sidebar-backdrop no-print" id="sidebarBackdrop"></div>
+
+    <!-- Barra Lateral (Auto-ocultable / Desplegable Automático) -->
+    <aside class="sidebar no-print" id="appSidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo-wrap">
+          <img src="assets/brand-logo.svg" alt="Logo" class="brand-logo" id="sidebarLogoImg" data-logo />
+        </div>
+        <div class="brand-meta">
+          <strong class="brand-company-name" id="sidebarCompanyName"></strong>
+          <span class="branch-badge" id="sidebarBranchBadge"></span>
+          <p class="brand-subtitle" id="sidebarCompanyTitle">Sistema de Control de Asistencia ZKTeco</p>
+        </div>
+        <button class="btn-collapse-sidebar" id="btnCollapseSidebar" type="button" title="Ocultar menú lateral">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item" data-view="reports">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 17v-6m4 6V7m4 10v-3M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          <div>
+            <span class="nav-title">Dashboard Principal</span>
+            <span class="nav-desc">Indicadores, gráficas y resumen</span>
+          </div>
+        </button>
+
+        <!-- Botón para abrir el Modal Generador de Reportes -->
+        <button class="nav-item nav-item-action" type="button" id="btnOpenReportModalSidebar">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          <div>
+            <span class="nav-title" style="color:var(--brand-accent-bright)">Generar Reporte</span>
+            <span class="nav-desc">Filtrar por fechas y exportar</span>
+          </div>
+        </button>
+
+        <button class="nav-item" data-view="employees">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75" />
+          </svg>
+          <div>
+            <span class="nav-title">Padrón de Empleados</span>
+            <span class="nav-desc">Agregar y dar de baja personal</span>
+          </div>
+        </button>
+
+        <button class="nav-item" data-view="rules">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <div>
+            <span class="nav-title">Horarios, Vacaciones y Festivos</span>
+            <span class="nav-desc">Tolerancia, permisos y asuetos</span>
+          </div>
+        </button>
+
+        <button class="nav-item" data-view="device">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          <div>
+            <span class="nav-title">Opciones de Checador y Empresa</span>
+            <span class="nav-desc">Agregar reloj ZKTeco, USB y datos</span>
+          </div>
+        </button>
+
+        <div class="nav-section-label req-superadmin">Administración</div>
+        <button class="nav-item req-superadmin" data-view="companies">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4" />
+            <path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01" />
+          </svg>
+          <div>
+            <span class="nav-title">Empresas</span>
+            <span class="nav-desc">Alta de clientes, logo y color</span>
+          </div>
+        </button>
+        <button class="nav-item req-superadmin" data-view="users">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M19 8v6M22 11h-6" />
+          </svg>
+          <div>
+            <span class="nav-title">Usuarios y Permisos</span>
+            <span class="nav-desc">Accesos y roles por empresa</span>
+          </div>
+        </button>
+        <button class="nav-item req-superadmin" data-view="license">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+          <div>
+            <span class="nav-title">Licencia y Respaldos</span>
+            <span class="nav-desc">Activación y copias de seguridad</span>
+          </div>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="device-status-card">
+          <div class="status-dot-row">
+            <span class="status-dot" id="sidebarDot"></span>
+            <span class="status-title" id="sidebarStatusText">Listo</span>
+          </div>
+          <p class="status-desc" id="sidebarDeviceDesc">ZKTeco</p>
+        </div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);">
+          <div style="font-size:11px;line-height:1.2">
+            <div style="color:#F8FAFC;font-weight:600" id="sidebarUserFullName">Administrador</div>
+            <div style="color:var(--brand-accent-bright);font-size:10px;font-weight:700">SESIÓN ACTIVA</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Área Principal -->
+    <main class="main-area">
+      <!-- Encabezado Superior -->
+      <header class="topbar no-print">
+        <div class="topbar-brand-title">
+          <img src="assets/brand-logo.svg" alt="Logo" class="topbar-logo" id="topbarLogoImg" data-logo />
+          <div>
+            <h1 class="page-title" id="pageTitle">Reporte de Asistencia</h1>
+            <p class="page-subtitle" id="pageSubtitle">Consulta de entradas, salidas, retardos, faltas y horas
+              trabajadas</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <!-- Selector de Empresa (multiempresa) -->
+          <div class="company-switcher" id="companySwitcher" hidden>
+            <button type="button" class="company-switcher-btn" id="companySwitcherBtn" aria-haspopup="listbox" aria-expanded="false">
+              <span class="company-dot" id="companySwitcherDot"></span>
+              <span class="company-switcher-text">
+                <span class="company-switcher-label">Empresa activa</span>
+                <strong id="companySwitcherName">—</strong>
+              </span>
+              <span class="company-switcher-caret" id="companySwitcherCaret">▾</span>
+            </button>
+            <div class="company-switcher-panel" id="companySwitcherPanel" hidden>
+              <input type="search" id="companySwitcherSearch" class="company-switcher-search" placeholder="Buscar empresa..." autocomplete="off" />
+              <ul class="company-switcher-list" id="companySwitcherList" role="listbox"></ul>
+            </div>
+          </div>
+          <div class="quick-kpi-pill">
+            <span class="pill-label">Empleados Activos:</span>
+            <strong id="topActiveEmployees">0</strong>
+          </div>
+          <div class="quick-kpi-pill">
+            <span class="pill-label">Checadas:</span>
+            <strong id="topTotalLogs">0</strong>
+          </div>
+          <button class="btn btn-secondary req-operator" id="btnOpenNewEmployeeTop">
+            + Nuevo Empleado
+          </button>
+          <!-- Contenedor de Estado de Sesión -->
+          <div id="authContainer" class="auth-container" hidden>
+            <div class="auth-logged-pill">
+              <span><strong id="topUserFullName">Administrador</strong></span>
+              <span class="user-role-badge" id="topUserRole">ADMIN</span>
+              <button type="button" class="btn-logout" id="btnLogout" title="Cerrar sesión">Salir</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Aviso de licencia (prueba, por vencer, vencida) -->
+      <div class="license-banner no-print" id="licenseBanner" hidden>
+        <span id="licenseBannerText"></span>
+        <button type="button" class="btn btn-sm req-superadmin" id="licenseBannerBtn">Activar licencia</button>
+      </div>
+
+      <!-- Encabezado Exclusivo para Impresión / PDF Oficial -->
+      <section class="print-only print-header">
+        <div class="print-header-grid">
+          <img src="assets/brand-logo.svg" alt="Logo" class="print-logo" id="printLogoImg" data-logo />
+          <div class="print-title-block">
+            <h2 id="printCompanyHeader"></h2>
+            <h3 id="printReportTitle">REPORTE DE ASISTENCIA Y CONTROL DE PERSONAL</h3>
+            <p id="printMetaRange">Periodo de evaluación</p>
+          </div>
+          <div class="print-stamp">
+            <div><strong>Fecha de Emisión:</strong> <span id="printEmissionDate"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notificaciones -->
+      <div id="toastContainer" class="toast-container no-print"></div>
+
+      <!-- ============================================================== -->
+      <!-- VISTA 1: DASHBOARD PRINCIPAL DE ASISTENCIA                     -->
+      <!-- ============================================================== -->
+      <section class="view-section active" id="view-reports">
+        <!-- Tarjetas de Resumen KPI -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Empleados</span>
+            <strong class="kpi-value" id="kpiTotalEmployees">0</strong>
+            <span class="kpi-foot" id="kpiRangeDays">En el periodo</span>
+          </div>
+          <div class="kpi-card kpi-success">
+            <span class="kpi-label">Asistencias</span>
+            <strong class="kpi-value" id="kpiPresentCount">0</strong>
+            <span class="kpi-foot">Entradas a tiempo</span>
+          </div>
+          <div class="kpi-card kpi-warning">
+            <span class="kpi-label">Retardos</span>
+            <strong class="kpi-value" id="kpiLateCount">0</strong>
+            <span class="kpi-foot">Fuera de tolerancia</span>
+          </div>
+          <div class="kpi-card kpi-danger">
+            <span class="kpi-label">Faltas</span>
+            <strong class="kpi-value" id="kpiAbsenceCount">0</strong>
+            <span class="kpi-foot">Días sin checada</span>
+          </div>
+          <div class="kpi-card kpi-info">
+            <span class="kpi-label">Vacaciones / Festivos</span>
+            <strong class="kpi-value" id="kpiLeaveHolidayCount">0</strong>
+            <span class="kpi-foot">Días justificados</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Horas Trabajadas</span>
+            <strong class="kpi-value" id="kpiWorkedHours">0 hrs</strong>
+            <span class="kpi-foot" id="lftBannerSummary">Jornada ordinaria acumulada</span>
+          </div>
+        </div>
+
+        <!-- Panel de Gráficas Ejecutivas -->
+        <div class="charts-grid">
+          <div class="card chart-card">
+            <div class="chart-card-header">
+              <div>
+                <h3 class="card-title">Cumplimiento</h3>
+                <p class="card-desc">Días-empleado del periodo</p>
+              </div>
+            </div>
+            <div id="chartCompliance" class="ax-compliance"></div>
+          </div>
+
+          <div class="card chart-card">
+            <div class="chart-card-header">
+              <div>
+                <h3 class="card-title">Asistencia por día</h3>
+                <p class="card-desc">Empleados que checaron cada día</p>
+              </div>
+            </div>
+            <div id="chartDailyBars" class="ax-daily"></div>
+          </div>
+
+          <div class="card chart-card">
+            <div class="chart-card-header">
+              <div>
+                <h3 class="card-title">Horas por empleado</h3>
+                <p class="card-desc">Normales y extra del periodo</p>
+              </div>
+            </div>
+            <div id="chartEmployeeHours" class="ax-hours"></div>
+          </div>
+        </div>
+
+        <!-- Tabla 1: Resumen por Empleado -->
+        <div class="card" id="cardSummaryTable">
+          <div class="card-header-inline">
+            <div>
+              <h3 class="card-title">Resumen General por Empleado</h3>
+              <p class="card-desc">Haga clic en el nombre de un empleado para ver su detalle de asistencia y gráficas
+              </p>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID Reloj</th>
+                  <th>Empleado</th>
+                  <th>Departamento / Puesto</th>
+                  <th class="text-center">Asistencias</th>
+                  <th class="text-center">Retardos</th>
+                  <th class="text-center">Min. Retardo</th>
+                  <th class="text-center">Vacaciones / Festivos</th>
+                  <th class="text-center">Faltas</th>
+                  <th class="text-center">Hrs. Normales</th>
+                  <th class="text-center">Hrs. Extra</th>
+                  <th class="text-right">Total Horas</th>
+                  <th class="text-center">Límite de Horas</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyEmployeeSummary"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tabla 2: Detalle Día por Día (Matriz para Impresión Detallada) -->
+        <div class="print-detailed-matrix" id="printDetailedMatrixWrap" style="display:none">
+          <div class="table-responsive">
+            <table class="data-table" id="tableDetailedMatrix">
+              <thead id="theadDetailedMatrix"></thead>
+              <tbody id="tbodyDetailedMatrix"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pie de Impresión -->
+        <div class="print-only print-legal-clause">
+          <strong>CONTROL DE ASISTENCIA:</strong>
+          Este documento refleja el resumen validado de asistencia, descansos, incidencias y horas trabajadas registradas en el reloj checador.
+        </div>
+        <div class="print-only print-signatures">
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <strong>ELABORÓ / RECURSOS HUMANOS</strong>
+            <span id="printSigCompany">Administración de Personal</span>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <strong>AUTORIZÓ / GERENCIA</strong>
+            <span>Firma de Conformidad</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- VISTA 2: PADRÓN DE EMPLEADOS                                   -->
+      <!-- ============================================================== -->
+      <section class="view-section" id="view-employees">
+        <div class="split-grid-employees">
+          <!-- Formulario Sencillo de Empleado -->
+          <div class="card req-operator">
+            <h3 class="card-title" id="empFormTitle">Agregar Empleado</h3>
+            <p class="card-desc">Capture el número de ID que tiene asignado el trabajador en el reloj checador</p>
+
+            <form id="formEmployee" class="vertical-form">
+              <input type="hidden" id="empId" />
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="empZkUserId">ID en el Checador (PIN) *</label>
+                  <input type="number" id="empZkUserId" required placeholder="Ej. 106" />
+                </div>
+                <div class="form-group">
+                  <label for="empCardNumber">N° Tarjeta (Opcional)</label>
+                  <input type="text" id="empCardNumber" placeholder="Opcional" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="empName">Nombre Completo *</label>
+                <input type="text" id="empName" required placeholder="Ej. Juan Pérez García" />
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="empDepartment">Departamento / Área *</label>
+                  <input type="text" id="empDepartment" list="deptSuggestions" required placeholder="Ej. Operaciones" />
+                  <datalist id="deptSuggestions">
+                    <option value="Administración"></option>
+                    <option value="Operaciones / Taller"></option>
+                    <option value="Almacén"></option>
+                    <option value="Ventas y Servicio"></option>
+                    <option value="Recursos Humanos"></option>
+                  </datalist>
+                </div>
+                <div class="form-group">
+                  <label for="empPosition">Puesto *</label>
+                  <input type="text" id="empPosition" required placeholder="Ej. Auxiliar / Técnico" />
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="empShiftId">Horario Asignado *</label>
+                  <select id="empShiftId" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="empHireDate">Fecha de Ingreso</label>
+                  <input type="date" id="empHireDate" />
+                </div>
+              </div>
+
+              <input type="hidden" id="empPrivilege" value="0" />
+              <input type="hidden" id="empActive" value="true" />
+              <label class="checkbox-row">
+                <input type="checkbox" id="empSyncDevice" checked />
+                <span>Enviar también al reloj checador (alta o cambio de nombre/tarjeta)</span>
+              </label>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar Empleado</button>
+                <button type="button" class="btn btn-outline" id="btnResetEmpForm">Limpiar</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Lista de Empleados -->
+          <div class="card">
+            <div class="card-header-inline">
+              <div>
+                <h3 class="card-title">Padrón de Empleados</h3>
+                <p class="card-desc">Lista de personal registrado en el sistema</p>
+              </div>
+              <div class="search-bar-wrap">
+                <input type="search" id="searchEmployeeInput" placeholder="Buscar empleado por nombre o ID..."
+                  class="input-search" />
+                <a href="api/v1/employees/export-usb" id="btnExportUsbDat" class="btn btn-outline btn-sm" download="empleados_zkteco.dat">
+                  Descargar Padrón USB (.dat)
+                </a>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID Reloj</th>
+                    <th>Nombre</th>
+                    <th>Departamento / Puesto</th>
+                    <th>Horario</th>
+                    <th>Ingreso</th>
+                    <th>Estado</th>
+                    <th class="text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyEmployees"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- VISTA 3: HORARIOS, VACACIONES Y DÍAS FESTIVOS                  -->
+      <!-- ============================================================== -->
+      <section class="view-section" id="view-rules">
+        <div class="rules-grid-3">
+          <!-- Horarios -->
+          <div class="card req-admin">
+            <h3 class="card-title" id="shiftFormTitle">1. Horarios y Regla de Retardo</h3>
+            <p class="card-desc">Configure a qué hora entran, a qué hora salen y cuántos minutos tienen de tolerancia
+            </p>
+
+            <form id="formShift" class="vertical-form">
+              <input type="hidden" id="shiftId" />
+              <div class="form-group">
+                <label for="shiftName">Nombre del Horario *</label>
+                <input type="text" id="shiftName" required placeholder="Ej. Turno General" />
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="shiftEntry">Hora Entrada *</label>
+                  <input type="time" id="shiftEntry" value="08:00" required />
+                </div>
+                <div class="form-group">
+                  <label for="shiftExit">Hora Salida *</label>
+                  <input type="time" id="shiftExit" value="18:00" required />
+                </div>
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="shiftTolerance">Minutos de Tolerancia *</label>
+                  <input type="number" id="shiftTolerance" value="10" min="0" max="120" required />
+                </div>
+                <div class="form-group">
+                  <label for="shiftWorkDaysPreset">Días de Trabajo</label>
+                  <select id="shiftWorkDaysPreset">
+                    <option value="1,2,3,4,5,6">Lunes a Sábado</option>
+                    <option value="1,2,3,4,5">Lunes a Viernes</option>
+                    <option value="0,1,2,3,4,5,6">Lunes a Domingo</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="btnSaveShift">Guardar Horario</button>
+                <button type="button" class="btn btn-outline" id="btnResetShiftForm" style="display:none">Cancelar
+                  Edición</button>
+              </div>
+            </form>
+
+            <div class="divider"></div>
+            <h4 class="sublist-title">Horarios Guardados</h4>
+            <div id="listShiftsContainer" class="item-stack"></div>
+          </div>
+
+          <!-- Vacaciones y Permisos -->
+          <div class="card req-operator">
+            <h3 class="card-title">2. Vacaciones y Permisos</h3>
+            <p class="card-desc">Asigne vacaciones o incapacidades a un empleado para que no le marque falta</p>
+
+            <form id="formLeave" class="vertical-form">
+              <div class="form-group">
+                <label for="leaveEmployeeId">Empleado *</label>
+                <select id="leaveEmployeeId" required></select>
+              </div>
+              <div class="form-group">
+                <label for="leaveType">Motivo *</label>
+                <select id="leaveType" required>
+                  <option value="VACACIONES">Vacaciones</option>
+                  <option value="PERMISO">Permiso Justificado</option>
+                  <option value="INCAPACIDAD">Incapacidad Médica</option>
+                </select>
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="leaveStart">Desde *</label>
+                  <input type="date" id="leaveStart" required />
+                </div>
+                <div class="form-group">
+                  <label for="leaveEnd">Hasta *</label>
+                  <input type="date" id="leaveEnd" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="leaveNotes">Nota (Opcional)</label>
+                <input type="text" id="leaveNotes" placeholder="Ej. Vacaciones anuales" />
+              </div>
+              <button type="submit" class="btn btn-primary btn-full">Guardar Vacaciones / Permiso</button>
+            </form>
+
+            <div class="divider"></div>
+            <h4 class="sublist-title">Vacaciones y Permisos Activos</h4>
+            <div id="listLeavesContainer" class="item-stack"></div>
+          </div>
+
+          <!-- Días Festivos -->
+          <div class="card req-operator">
+            <h3 class="card-title">3. Días Festivos (Inhábiles)</h3>
+            <p class="card-desc">Agregue los días festivos en los que no se trabaja en la empresa</p>
+
+            <form id="formHoliday" class="vertical-form">
+              <div class="form-group">
+                <label for="holidayDate">Fecha del Festivo *</label>
+                <input type="date" id="holidayDate" required />
+              </div>
+              <div class="form-group">
+                <label for="holidayName">Nombre del Día Festivo *</label>
+                <input type="text" id="holidayName" required placeholder="Ej. Día del Trabajo / Navidad" />
+              </div>
+              <button type="submit" class="btn btn-primary btn-full">Agregar Día Festivo</button>
+            </form>
+
+            <div class="divider"></div>
+            <h4 class="sublist-title">Días Festivos Registrados</h4>
+            <div id="listHolidaysContainer" class="item-stack"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- VISTA 4: OPCIONES DE CHECADOR ZKTECO Y DATOS DE LA EMPRESA     -->
+      <!-- ============================================================== -->
+      <section class="view-section" id="view-device">
+        <!-- Lista de Relojes Checadores -->
+        <div class="card">
+          <div class="card-header-inline">
+            <div>
+              <h3 class="card-title">Relojes Checadores ZKTeco</h3>
+              <p class="card-desc">Equipos dados de alta en el programa</p>
+            </div>
+            <button type="button" class="btn btn-primary req-admin" id="btnNewDeviceClean">
+              + Agregar Otro Checador
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nombre del Checador</th>
+                  <th>Ubicación</th>
+                  <th>Dirección IP y Puerto</th>
+                  <th>Modo de Uso</th>
+                  <th class="text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyDevicesList"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="rules-grid-3">
+          <!-- Opción 1: Agregar / Configurar Checador por Red IP -->
+          <div class="card req-admin">
+            <span class="badge badge-amber">OPCIÓN 1: CONEXIÓN POR RED (IP)</span>
+            <h3 class="card-title" id="deviceFormTitle" style="margin-top:8px">Agregar / Configurar Checador</h3>
+            <p class="card-desc">Ingrese el nombre y la dirección IP que tiene el reloj ZKTeco</p>
+
+            <form id="formDeviceSettings" class="vertical-form">
+              <input type="hidden" id="devId" />
+              <input type="hidden" id="devModel" value="ZKTeco Estándar" />
+              <input type="hidden" id="devSerial" value="" />
+
+              <div class="form-group">
+                <label for="devName">Nombre del Checador *</label>
+                <input type="text" id="devName" required placeholder="Ej. Checador Entrada Principal" />
+              </div>
+
+              <div class="form-group">
+                <label for="devLocation">Ubicación / Área</label>
+                <input type="text" id="devLocation" placeholder="Ej. Recepción / Taller" />
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="devIp">Dirección IP *</label>
+                  <input type="text" id="devIp" required placeholder="192.168.1.201" />
+                </div>
+                <div class="form-group">
+                  <label for="devPort">Puerto *</label>
+                  <input type="number" id="devPort" value="4370" required />
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="devMode">Tipo de Conexión</label>
+                  <select id="devMode">
+                    <option value="HYBRID">Red IP + USB</option>
+                    <option value="NETWORK">Solo Red IP</option>
+                    <option value="USB">Solo Memoria USB</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="devCommKey">Clave (CommKey)</label>
+                  <input type="number" id="devCommKey" value="0" />
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar Checador</button>
+                <button type="button" class="btn btn-dark" id="btnTestDevice">Probar Conexión</button>
+              </div>
+            </form>
+
+            <div id="deviceProbeResult" class="probe-box">
+              Presione <strong>"Probar Conexión"</strong> para verificar si el reloj responde en la red.
+            </div>
+          </div>
+
+          <!-- Opción 2: Importar desde Memoria USB -->
+          <div class="card req-operator">
+            <span class="badge badge-blue">OPCIÓN 2: DESCARGAR CHECADAS</span>
+            <h3 class="card-title" style="margin-top:8px">Descargar por red</h3>
+            <p class="card-desc">Trae las checadas directo del reloj principal y envía el padrón de empleados activos.</p>
+            <div class="form-actions" style="margin-top:10px">
+              <button type="button" class="btn btn-primary" id="btnDownloadDevice">Descargar checadas del reloj</button>
+              <button type="button" class="btn btn-outline" id="btnPushEmployees">Enviar empleados al reloj</button>
+            </div>
+            <div id="deviceNetResult" class="probe-box" hidden></div>
+
+            <h3 class="card-title" style="margin-top:22px">O importar por USB</h3>
+            <p class="card-desc">Seleccione el archivo <code>_attlog.dat</code> que descargó del reloj en su memoria USB
+            </p>
+
+            <div class="usb-upload-zone">
+              <label for="usbFileInput" class="usb-file-label">
+                <strong>Seleccionar archivo de la USB (<code>*_attlog.dat</code> o <code>.txt</code>)</strong>
+                <span>Cargue el archivo directo desde su carpeta o memoria USB</span>
+              </label>
+              <input type="file" id="usbFileInput" accept=".dat,.txt,.csv,.log" />
+            </div>
+
+            <div class="form-group">
+              <label for="usbRawTextarea">Vista previa de registros a importar:</label>
+              <textarea id="usbRawTextarea" rows="4"
+                placeholder="101&#9;2026-11-04 08:00:00&#9;1&#9;0&#9;1&#9;0"></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="btnProcessUsb">Cargar Checadas al Sistema</button>
+              <button type="button" class="btn btn-outline" id="btnLoadSampleUsb">Probar con Ejemplo</button>
+            </div>
+          </div>
+
+          <!-- Opción 3: Datos de la Empresa y Ley del Trabajo (Enero) -->
+          <div class="card req-admin">
+            <span class="badge badge-amber">OPCIÓN 3: DATOS DEL CLIENTE Y LEY LFT</span>
+            <h3 class="card-title" style="margin-top:8px">Datos de la Empresa y Jornada LFT</h3>
+            <p class="card-desc">Personalice el nombre del cliente, sucursal y parámetros de la Ley Federal del Trabajo
+              para los reportes</p>
+
+            <form id="formCompanySettings" class="vertical-form">
+              <div class="form-group">
+                <label for="compName">Nombre de la Empresa / Cliente *</label>
+                <input type="text" id="compName" required placeholder="Ej. Ferretería Central" />
+              </div>
+              <div class="form-group">
+                <label for="compBranch">Sucursal / Planta *</label>
+                <input type="text" id="compBranch" required placeholder="Ej. Matriz" />
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="compWeeklyHours">Jornada Semanal Máxima</label>
+                  <select id="compWeeklyHours">
+                    <option value="48">48 Horas Semanales</option>
+                    <option value="46">46 Horas Semanales</option>
+                    <option value="44">44 Horas Semanales</option>
+                    <option value="42">42 Horas Semanales</option>
+                    <option value="40">40 Horas Semanales</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="compMealMinutes">Tiempo de Comida Diario</label>
+                  <select id="compMealMinutes">
+                    <option value="60">60 min (1 Hora)</option>
+                    <option value="30">30 min</option>
+                    <option value="0">Sin descuento (Jornada corrida)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="brand-fields" data-brand-fields="comp"></div>
+              <button type="submit" class="btn btn-primary btn-full">Guardar Datos de Empresa</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Seguridad y Cambio de Contraseña de Administrador -->
+        <div class="card" id="cardAdminSecurity">
+          <div class="card-header-inline">
+            <div>
+              <span class="badge badge-blue">SEGURIDAD Y CONTROL DE ACCESO</span>
+              <h3 class="card-title" style="margin-top:8px">Mi Contraseña</h3>
+              <p class="card-desc">Cambie la contraseña de su propio usuario</p>
+            </div>
+          </div>
+          <form id="formChangePassword" class="vertical-form" style="max-width:560px;margin-top:10px">
+            <div class="form-group">
+              <label for="changePassOld">Contraseña Actual *</label>
+              <input type="password" id="changePassOld" required placeholder="Ingrese su contraseña actual" autocomplete="current-password" />
+            </div>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="changePassNew">Nueva Contraseña *</label>
+                <input type="password" id="changePassNew" required placeholder="Mínimo 4 caracteres" autocomplete="new-password" />
+              </div>
+              <div class="form-group">
+                <label for="changePassConfirm">Confirmar Nueva Contraseña *</label>
+                <input type="password" id="changePassConfirm" required placeholder="Repita la nueva contraseña" autocomplete="new-password" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-dark" style="margin-top:6px">🔐 Actualizar Contraseña de Administrador</button>
+          </form>
+        </div>
+
+        <!-- Bitácora de Checadas Recientes -->
+        <div class="card">
+          <div class="card-header-inline">
+            <div>
+              <h3 class="card-title">Últimas Checadas Registradas</h3>
+              <p class="card-desc">Historial reciente de entradas y salidas recibidas</p>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Fecha y Hora</th>
+                  <th>ID Reloj</th>
+                  <th>Empleado</th>
+                  <th>Departamento</th>
+                  <th>Evento</th>
+                  <th>Origen</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyRecentLogs"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <!-- ===================== VISTA: EMPRESAS (Superadministrador) ===================== -->
+      <section class="view-section" id="view-companies">
+        <div class="grid-2-1">
+          <div class="card">
+            <div class="card-header-inline">
+              <div>
+                <h3 class="card-title">Empresas</h3>
+                <p class="card-desc">Clientes administrados en este equipo. Cada empresa tiene sus propios empleados, checadores y reportes.</p>
+              </div>
+              <button type="button" class="btn btn-primary" id="btnNewCompany">+ Nueva Empresa</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Empresa</th>
+                    <th>RFC</th>
+                    <th class="text-center">Empleados</th>
+                    <th>Estado</th>
+                    <th class="text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyCompanies"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title" id="companyFormTitle">Nueva Empresa</h3>
+            <p class="card-desc">Datos del cliente, logotipo y color con el que se mostrará el sistema</p>
+            <form id="formCompanyAdmin" class="vertical-form">
+              <input type="hidden" id="caId" />
+              <div class="form-group">
+                <label for="caName">Nombre o Razón Social *</label>
+                <input type="text" id="caName" required maxlength="120" placeholder="Ej. Ferretería Central" />
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="caBranch">Sucursal / Planta</label>
+                  <input type="text" id="caBranch" maxlength="120" placeholder="Ej. Matriz" />
+                </div>
+                <div class="form-group">
+                  <label for="caRfc">RFC</label>
+                  <input type="text" id="caRfc" maxlength="13" placeholder="Ej. FCE850101AB1" style="text-transform:uppercase" />
+                </div>
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="caWeekly">Jornada Semanal Máxima</label>
+                  <select id="caWeekly">
+                    <option value="48">48 Horas</option>
+                    <option value="46" selected>46 Horas</option>
+                    <option value="44">44 Horas</option>
+                    <option value="42">42 Horas</option>
+                    <option value="40">40 Horas</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="caMeal">Tiempo de Comida</label>
+                  <select id="caMeal">
+                    <option value="60" selected>60 min</option>
+                    <option value="30">30 min</option>
+                    <option value="0">Sin descuento</option>
+                  </select>
+                </div>
+              </div>
+              <div class="brand-fields" data-brand-fields="ca"></div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="btnSaveCompanyAdmin">Guardar Empresa</button>
+                <button type="button" class="btn btn-outline" id="btnResetCompanyAdmin">Limpiar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== VISTA: USUARIOS (Superadministrador) ===================== -->
+      <section class="view-section" id="view-users">
+        <div class="grid-2-1">
+          <div class="card">
+            <div class="card-header-inline">
+              <div>
+                <h3 class="card-title">Usuarios y Permisos</h3>
+                <p class="card-desc">Quién entra al sistema y qué puede hacer en cada empresa</p>
+              </div>
+              <button type="button" class="btn btn-primary" id="btnNewUser">+ Nuevo Usuario</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Empresas y rol</th>
+                    <th>Estado</th>
+                    <th class="text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyUsers"></tbody>
+              </table>
+            </div>
+            <div class="role-legend">
+              <div><strong>Solo lectura:</strong> consulta reportes y padrón.</div>
+              <div><strong>Operador:</strong> además captura empleados, checadas, vacaciones y festivos.</div>
+              <div><strong>Administrador:</strong> además configura checadores, horarios y datos de la empresa.</div>
+              <div><strong>Superadministrador:</strong> todas las empresas, y administra empresas y usuarios.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title" id="userFormTitle">Nuevo Usuario</h3>
+            <p class="card-desc">Asigne a qué empresas tiene acceso y con qué rol</p>
+            <form id="formUserAdmin" class="vertical-form" autocomplete="off">
+              <input type="hidden" id="uaId" />
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="uaUsername">Usuario (para iniciar sesión) *</label>
+                  <input type="text" id="uaUsername" required maxlength="40" placeholder="Ej. contador.lopez" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                  <label for="uaFullName">Nombre completo *</label>
+                  <input type="text" id="uaFullName" required maxlength="120" placeholder="Ej. Laura López" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="uaPassword" id="uaPasswordLabel">Contraseña *</label>
+                <input type="password" id="uaPassword" placeholder="Mínimo 4 caracteres" autocomplete="new-password" />
+              </div>
+              <label class="checkbox-row">
+                <input type="checkbox" id="uaSuperAdmin" />
+                <span>Superadministrador (acceso total a todas las empresas)</span>
+              </label>
+              <label class="checkbox-row">
+                <input type="checkbox" id="uaActive" checked />
+                <span>Usuario activo</span>
+              </label>
+              <div class="form-group" id="uaAccessGroup">
+                <label>Acceso por empresa</label>
+                <div class="access-matrix" id="uaAccessMatrix"></div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+                <button type="button" class="btn btn-outline" id="btnResetUserAdmin">Limpiar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+      <!-- ===================== VISTA: LICENCIA Y RESPALDOS (Superadministrador) ===================== -->
+      <section class="view-section" id="view-license">
+        <div class="grid-2-1">
+          <div class="card">
+            <div class="card-header-inline">
+              <div>
+                <h3 class="card-title">Respaldos de la Base de Datos</h3>
+                <p class="card-desc">Se genera una copia automática cada día y se conservan las últimas 30. Guarde copias fuera de esta computadora (USB o nube).</p>
+              </div>
+              <button type="button" class="btn btn-primary" id="btnBackupNow">Respaldar ahora</button>
+            </div>
+            <div class="probe-box probe-warn" id="restorePendingBox" hidden></div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th class="text-right">Tamaño</th>
+                    <th class="text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyBackups"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Licencia</h3>
+            <p class="card-desc">Suscripción anual para esta computadora</p>
+            <div class="license-status" id="licenseStatusBox"></div>
+            <div class="form-group">
+              <label>Código de este equipo</label>
+              <div class="machine-code-row">
+                <code id="licenseMachineCode">—</code>
+                <button type="button" class="btn btn-outline btn-sm" id="btnCopyMachineCode">Copiar</button>
+              </div>
+              <small class="field-hint">Envíe este código a su proveedor para recibir su clave de licencia.</small>
+            </div>
+            <form id="formLicense" class="vertical-form">
+              <div class="form-group">
+                <label for="licenseKeyInput">Clave de licencia</label>
+                <textarea id="licenseKeyInput" rows="4" placeholder="LIC1...." spellcheck="false" autocomplete="off"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-full">Activar licencia</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal: Generador de Reportes de Asistencia -->
+  <div class="modal-backdrop no-print" id="modalReportGenerator" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <div class="badge badge-amber" style="margin-bottom:4px">GENERADOR DE REPORTES</div>
+          <h3>Generar Reporte de Asistencia</h3>
+          <p class="card-desc">Seleccione el rango de fechas para consultar o exportar</p>
+        </div>
+        <button class="modal-close" id="btnCloseReportModal" aria-label="Cerrar">&times;</button>
+      </div>
+
+      <form id="formReportFilter" class="vertical-form">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="repStartDate">Fecha de Inicio *</label>
+            <input type="date" id="repStartDate" required />
+          </div>
+          <div class="form-group">
+            <label for="repEndDate">Fecha de Término *</label>
+            <input type="date" id="repEndDate" required />
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="repDepartment">Departamento / Área</label>
+            <select id="repDepartment">
+              <option value="">Todos los departamentos</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="repEmployeeId">Empleado Específico</label>
+            <select id="repEmployeeId">
+              <option value="">Todo el personal</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="repTolerance">Tolerancia de Retardo (minutos)</label>
+          <input type="number" id="repTolerance" min="0" max="120" placeholder="Ej. 10 minutos" />
+        </div>
+
+        <div class="generator-actions" style="margin-top:14px">
+          <button type="submit" class="btn btn-dark btn-full">
+            🔄 Consultar y Actualizar Dashboard
+          </button>
+          <button type="button" class="btn btn-primary btn-full" id="btnExportExcel">
+            📊 Descargar Reporte en Excel
+          </button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button type="button" class="btn btn-outline" id="btnPrintReportSummary" style="padding:10px">
+              📄 PDF Resumen Simple
+            </button>
+            <button type="button" class="btn btn-outline" id="btnPrintReportDetailed" style="padding:10px">
+              📋 PDF Detallado (Día x Día)
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Detalle del Empleado -->
+  <div class="modal-backdrop no-print" id="modalEmployeeDetail" hidden>
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div>
+          <h3 id="empDetailName">Empleado</h3>
+          <p class="card-desc" id="empDetailMeta"></p>
+        </div>
+        <button class="modal-close" id="btnCloseEmpDetail" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="kpi-grid kpi-grid-compact" id="empDetailKpis"></div>
+      <div class="emp-detail-grid">
+        <div>
+          <h4 class="sublist-title">Calendario de Asistencia</h4>
+          <div class="cal-weekdays">
+            <span>Dom</span><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span>
+          </div>
+          <div class="cal-grid" id="empDetailCalendar"></div>
+          <div class="cal-legend">
+            <span><i class="legend-dot" style="background:#111113"></i>Asistencia</span>
+            <span><i class="legend-dot" style="background:#FFB000"></i>Retardo</span>
+            <span><i class="legend-dot" style="background:#C8281E"></i>Falta</span>
+            <span><i class="legend-dot" style="background:#C8C8C2"></i>Vacaciones / Festivo</span>
+            <span><i class="legend-dot" style="background:#E9E9E5;border:1px solid #C8C8C2"></i>Descanso</span>
+          </div>
+        </div>
+        <div>
+          <h4 class="sublist-title">Horas Trabajadas por Día</h4>
+          <div class="daily-bars-wrap" id="empDetailHoursChart"></div>
+          <h4 class="sublist-title" style="margin-top:18px">Puntualidad Promedio</h4>
+          <div id="empDetailPunctuality" class="probe-box"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Asistente de Configuración Inicial (Primer Arranque) -->
+  <div class="modal-backdrop no-print" id="modalInitialSetup" style="z-index:99999;background:rgba(15,23,42,0.96);backdrop-filter:blur(4px)">
+    <div class="modal-card" style="max-width:560px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.1);max-height:92vh;overflow-y:auto">
+      <div style="text-align:center;margin-bottom:16px">
+        <img src="assets/brand-logo.svg" alt="Logo" style="height:48px;object-fit:contain;margin-bottom:8px" data-brand-logo />
+        <h3 style="font-size:20px;font-weight:800;color:var(--text-main);margin:0">Configuración Inicial — <span data-brand-name>Control de Asistencia</span></h3>
+        <p class="card-desc" style="color:var(--text-secondary);margin-top:4px;font-size:12.5px">
+          Bienvenido a <strong data-brand-name>Control de Asistencia</strong>. Para iniciar, registre los datos de su empresa y defina el usuario de Administrador que protegerá el sistema.
+        </p>
+      </div>
+
+      <div id="setupErrorMsg" style="display:none;margin-bottom:12px;padding:10px 12px;background:#FEE2E2;border:1px solid #FCA5A5;color:#991B1B;border-radius:6px;font-size:12.5px"></div>
+
+      <form id="formInitialSetup" class="vertical-form" action="javascript:void(0);" onsubmit="return false;">
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:var(--radius-md);padding:12px;margin-bottom:12px">
+          <h4 style="font-size:12px;font-weight:700;color:var(--text-main);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">
+            1. Datos de la Empresa / Sucursal
+          </h4>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="setupCompanyName">Nombre de la Empresa *</label>
+              <input type="text" id="setupCompanyName" required placeholder="Ej. Ferretería Central" />
+            </div>
+            <div class="form-group">
+              <label for="setupBranchName">Sucursal / Planta *</label>
+              <input type="text" id="setupBranchName" value="Matriz" required placeholder="Ej. Matriz" />
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:var(--radius-md);padding:12px;margin-bottom:12px">
+          <h4 style="font-size:12px;font-weight:700;color:var(--text-main);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">
+            2. Reloj Checador Principal
+          </h4>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="setupDeviceIp">Dirección IP del Checador *</label>
+              <input type="text" id="setupDeviceIp" value="192.168.1.201" required placeholder="192.168.1.201" />
+            </div>
+            <div class="form-group">
+              <label for="setupDevicePort">Puerto *</label>
+              <input type="number" id="setupDevicePort" value="4370" required />
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#FFFFFF;border:1px solid #111113;border-radius:var(--radius-md);padding:12px;margin-bottom:14px">
+          <h4 style="font-size:12px;font-weight:700;color:#111113;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">
+            3. Cuenta del Administrador Principal
+          </h4>
+          <div class="form-group">
+            <label for="setupAdminFullName">Nombre Completo del Administrador *</label>
+            <input type="text" id="setupAdminFullName" required placeholder="Ej. Alejandro Villalobos" />
+          </div>
+          <div class="form-group">
+            <label for="setupAdminUsername">Nombre de Usuario para Login *</label>
+            <input type="text" id="setupAdminUsername" value="admin" required placeholder="admin" autocomplete="username" />
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="setupAdminPassword">Contraseña *</label>
+              <input type="password" id="setupAdminPassword" required placeholder="Mínimo 4 caracteres" autocomplete="new-password" />
+            </div>
+            <div class="form-group">
+              <label for="setupAdminPasswordConfirm">Confirmar Contraseña *</label>
+              <input type="password" id="setupAdminPasswordConfirm" required placeholder="Repita la contraseña" autocomplete="new-password" />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="btnInitialSetupSubmit" class="btn btn-primary btn-full" style="padding:13px;font-size:15px;font-weight:700">
+          🚀 Finalizar configuración
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Pantalla de Inicio de Sesión Obligatorio -->
+  <div class="modal-backdrop no-print" id="modalLogin" hidden style="z-index:99999">
+    <div class="modal-card" style="max-width:400px;padding:32px 28px;border:1px solid #2A2A30">
+      <div style="text-align:center;margin-bottom:20px">
+        <img src="assets/brand-logo.svg" alt="Logo" style="height:54px;object-fit:contain;margin-bottom:12px" data-brand-logo />
+        <div class="login-clock" id="loginClock" aria-label="Hora actual">--:--</div>
+        <h2 style="font-size:26px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#111113;margin:0 0 4px" data-brand-name>Control de Asistencia</h2>
+        <p style="font-size:12.5px;color:#64748B;margin:0"><span data-brand-tagline>Control de Asistencia y Personal ZKTeco</span> — Acceso Autorizado</p>
+      </div>
+
+      <div id="loginErrorMsg" style="display:none;margin-bottom:14px;padding:10px 12px;background:#FEE2E2;border:1px solid #FCA5A5;color:#991B1B;border-radius:6px;font-size:13px;text-align:center"></div>
+
+      <form id="formLogin" class="vertical-form" action="javascript:void(0);" onsubmit="return false;">
+        <div class="form-group">
+          <label for="loginUsername">Usuario de Administrador</label>
+          <input type="text" id="loginUsername" required placeholder="admin" autocomplete="username" value="admin" />
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Contraseña</label>
+          <input type="password" id="loginPassword" required placeholder="Escriba su contraseña" autocomplete="current-password" autofocus />
+        </div>
+        <button type="button" id="btnLoginSubmit" class="btn btn-primary btn-full" style="padding:13px;font-size:14.5px;font-weight:700;margin-top:12px;border:none;cursor:pointer;border-radius:6px">
+          🔐 Iniciar Sesión
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="vendor/exceljs.min.js"></script>
+  <script src="demo-api.js"></script>
+  <script type="module" src="app.js"></script>
+<!-- Barra de la demostración web (la inserta scripts/build-demo-web.mjs) -->
+<style>
+  #aionDemoBar { position: fixed; left: max(12px, env(safe-area-inset-left, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 9999; max-width: min(560px, calc(100vw - 24px));
+    background: #111113; color: #fff; border: 1px solid #2A2A30; border-radius: 10px; box-shadow: 0 12px 32px rgba(17,17,19,.28);
+    font: 14px/1.4 "Segoe UI", system-ui, sans-serif; }
+  #aionDemoBar .row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; flex-wrap: wrap }
+  #aionDemoBar .tag { background: #FFB000; color: #111113; font-weight: 800; font-size: 12px; letter-spacing: .6px; padding: 3px 8px; border-radius: 4px; text-transform: uppercase }
+  #aionDemoBar .txt { color: #C9C9CF; flex: 1 1 220px; min-width: 0 }
+  #aionDemoBar .txt b { color: #fff }
+  #aionDemoBar button, #aionDemoBar a { font: 600 13px "Segoe UI", system-ui, sans-serif; color: #fff; background: transparent; border: 1px solid #3A3A42; border-radius: 6px; padding: 6px 10px; cursor: pointer; text-decoration: none; white-space: nowrap }
+  #aionDemoBar a.wa { background: #FFB000; color: #111113; border-color: #FFB000 }
+  #aionDemoBar button:focus-visible, #aionDemoBar a:focus-visible { outline: 2px solid #FFB000; outline-offset: 2px }
+  #aionDemoBar.min .txt, #aionDemoBar.min .act { display: none }
+  @media print { #aionDemoBar { display: none } }
+</style>
+<div id="aionDemoBar" role="region" aria-label="Demostración">
+  <div class="row">
+    <span class="tag">Demo</span>
+    <span class="txt">Datos de ejemplo. Usuarios <b>admin</b>, <b>rh.lopez</b> y <b>contador</b>, contraseña <b>demo</b>.</span>
+    <span class="act" style="display:flex;gap:6px;flex-wrap:wrap">
+      <button type="button" id="aionDemoReset">Reiniciar demo</button>
+      <a class="wa" href="https://wa.me/526271432676" target="_blank" rel="noopener">WhatsApp 627 143 2676</a>
+    </span>
+    <button type="button" id="aionDemoMin" aria-label="Ocultar barra">–</button>
+  </div>
+</div>
+<script>
+  document.getElementById('aionDemoReset').addEventListener('click', () => window.AionDemo && window.AionDemo.reset());
+  document.getElementById('aionDemoMin').addEventListener('click', (e) => {
+    const bar = document.getElementById('aionDemoBar');
+    const min = bar.classList.toggle('min');
+    e.currentTarget.textContent = min ? '+' : '–';
+    e.currentTarget.setAttribute('aria-label', min ? 'Mostrar barra' : 'Ocultar barra');
+  });
+</script>
+
+</body>
+
+</html>
