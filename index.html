@@ -593,9 +593,23 @@
               <h3 class="card-title">Relojes Checadores ZKTeco</h3>
               <p class="card-desc">Equipos dados de alta en el programa</p>
             </div>
-            <button type="button" class="btn btn-primary req-admin" id="btnNewDeviceClean">
-              + Agregar Otro Checador
-            </button>
+            <div class="device-header-actions">
+              <button type="button" class="btn btn-outline req-admin" id="btnDiscoverDevices">
+                Buscar relojes en la red
+              </button>
+              <button type="button" class="btn btn-primary req-admin" id="btnNewDeviceClean">
+                + Agregar Otro Checador
+              </button>
+            </div>
+          </div>
+          <div class="discover-panel" id="discoverPanel" hidden>
+            <p class="discover-status" id="discoverStatus" role="status"></p>
+            <form class="discover-other" id="formDiscoverOther">
+              <label for="discoverNetwork">¿El reloj está en otra red?</label>
+              <input type="text" id="discoverNetwork" placeholder="Ej. 192.168.1" inputmode="decimal" autocomplete="off" />
+              <button type="submit" class="btn btn-outline btn-sm">Buscar en esa red</button>
+            </form>
+            <div class="discover-list" id="discoverList"></div>
           </div>
           <div class="table-responsive">
             <table class="data-table">

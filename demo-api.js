@@ -1737,6 +1737,21 @@ async function handle(method, url, headers, body) {
   }
   const delDev = pathname.match(/^\/api\/v1\/devices\/([^/]+)$/);
   if (method === 'DELETE' && delDev) { const id = decodeURIComponent(delDev[1]); t.devices = t.devices.filter((d) => d.id !== id); return { deletedId: id }; }
+  if (method === 'POST' && pathname === '/api/v1/devices/discover') {
+    await new Promise((r) => setTimeout(r, 2200)); // como la búsqueda real (~3 s)
+    const net = String(body.network || '').trim().replace(/\.(0|x|\*)$/i, '');
+    if (net && !/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(net)) throw new AppError('INVALID_NETWORK', 'Escriba la red como los tres primeros números de la IP, por ejemplo 192.168.1');
+    const main = t.devices[0];
+    const prefix = net || (main?.ipAddress || '192.168.1.201').split('.').slice(0, 3).join('.');
+    const registeredByIp = new Map(t.devices.map((d) => [d.ipAddress, d.deviceName]));
+    const found = net
+      ? [{ ip: `${prefix}.110`, port: 4370, protocol: 'UDP', commKey: null, needsCommKey: true, error: 'Responde como reloj ZKTeco pero tiene clave de comunicación.' }]
+      : [
+          main && { ip: main.ipAddress, port: main.port, protocol: 'TCP', commKey: main.commKey, needsCommKey: false, deviceName: main.model.replace(/^ZKTeco\s*/, ''), serialNumber: main.serialNumber, users: t.employees.filter((e) => e.active).length + 1, records: t.logs.length + t.pending.length },
+          { ip: `${prefix}.205`, port: 4370, protocol: 'TCP', commKey: 0, needsCommKey: false, deviceName: 'K40', serialNumber: 'DEMO4419000207', users: 3, records: 58 }
+        ].filter(Boolean);
+    return { subnets: [`${prefix}.x`], scanned: 253, devices: found.map((d) => ({ ...d, registeredAs: registeredByIp.get(d.ip) || null })) };
+  }
   if (method === 'POST' && pathname === '/api/v1/device/test') {
     const dev = t.devices.find((d) => d.ipAddress === body.ipAddress) || t.devices[0];
     if (!dev) return { reachable: false, code: 'NO_DEVICE', message: 'No hay un reloj checador configurado.' };

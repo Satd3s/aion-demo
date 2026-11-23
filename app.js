@@ -2478,6 +2478,85 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('btnNewDeviceClean')?.addEventListener('click', resetDeviceFormForNew);
 
+  // --- Buscar relojes ZKTeco en la red local ---
+  let discovered = [];
+  async function runDiscover(btn, network = '') {
+    const panel = document.getElementById('discoverPanel');
+    const status = document.getElementById('discoverStatus');
+    const list = document.getElementById('discoverList');
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Buscando...';
+    panel.hidden = false;
+    list.innerHTML = '';
+    status.textContent = network
+      ? `Buscando relojes ZKTeco en ${network}.x. Tarda unos segundos...`
+      : 'Buscando relojes ZKTeco en la red de este equipo. Tarda unos segundos...';
+    try {
+      const r = await apiRequest('/api/v1/devices/discover', { method: 'POST', body: JSON.stringify({ network }) });
+      discovered = r.devices || [];
+      const where = r.subnets?.length ? ` en ${r.subnets.join(', ')}` : '';
+      if (!discovered.length) {
+        status.textContent = `No se encontró ningún reloj${where}. Revise que el reloj esté encendido y conectado a la misma red (cable o Wi-Fi) que esta computadora, o escriba su IP a mano.`;
+        return;
+      }
+      status.textContent = `Se encontraron ${discovered.length} reloj(es)${where}.`;
+      list.innerHTML = discovered
+        .map((d, i) => {
+          const name = d.deviceName || 'Reloj ZKTeco';
+          const facts = d.needsCommKey
+            ? '<span class="discover-note">Tiene clave de comunicación</span>'
+            : `<span>Serie ${esc(d.serialNumber || '—')}</span><span>${esc(d.users ?? 0)} usuarios</span><span>${esc(d.records ?? 0)} checadas</span>`;
+          const action = d.registeredAs
+            ? `<span class="discover-tag">Ya registrado: ${esc(d.registeredAs)}</span>`
+            : `<button type="button" class="btn btn-secondary btn-sm" data-discover="${i}">Usar este reloj</button>`;
+          return `<div class="discover-item">
+              <div class="discover-main">
+                <strong>${esc(name)}</strong>
+                <span class="discover-ip">${esc(d.ip)}:${esc(d.port)} · ${esc(d.protocol)}</span>
+              </div>
+              <div class="discover-facts">${facts}</div>
+              <div class="discover-action">${action}</div>
+            </div>`;
+        })
+        .join('');
+    } catch (err) {
+      status.textContent = err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  }
+
+  document.getElementById('btnDiscoverDevices')?.addEventListener('click', (e) => runDiscover(e.currentTarget));
+  document.getElementById('formDiscoverOther')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const network = document.getElementById('discoverNetwork').value.trim().replace(/\.(0|x|\*)$/i, '');
+    if (!network) return document.getElementById('discoverNetwork').focus();
+    runDiscover(e.currentTarget.querySelector('button'), network);
+  });
+
+  document.getElementById('discoverList')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-discover]');
+    if (!btn) return;
+    const d = discovered[Number(btn.dataset.discover)];
+    if (!d) return;
+    resetDeviceFormForNew();
+    document.getElementById('devName').value = d.deviceName ? `Checador ${d.deviceName}` : 'Checador';
+    document.getElementById('devIp').value = d.ip;
+    document.getElementById('devPort').value = d.port;
+    document.getElementById('devCommKey').value = d.commKey ?? 0;
+    document.getElementById('devModel').value = d.deviceName || 'ZKTeco Estándar';
+    document.getElementById('devSerial').value = d.serialNumber || '';
+    document.getElementById('deviceFormTitle').textContent = 'Agregar reloj encontrado';
+    const msg = d.needsCommKey
+      ? `Escriba la clave (CommKey) del reloj ${d.ip} y presione "Guardar Checador".`
+      : `Revise el nombre y la ubicación, y presione "Guardar Checador".`;
+    showToast(msg);
+    document.getElementById(d.needsCommKey ? 'devCommKey' : 'devName').focus();
+    document.getElementById('formDeviceSettings').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
   document.getElementById('tbodyDevicesList')?.addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
